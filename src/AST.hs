@@ -2,14 +2,22 @@ module AST where
 
 type Identifier = String
 
-data Assignment = Assignment Identifier Expression
+{- data Assignment = Assignment Identifier Expression
+  deriving (Show, Eq) -}
+
+
+ 
+data Statement
+    = Assigning Identifier Expression
+  -- | IfStatement Expression [Statement] (Maybe [Statement])
   deriving (Show, Eq)
+  
 
 data Expression
   = Var Identifier
   | Num Int
   | Binop Op Expression Expression
-  | UnaryExpression UnaryOperator Expression
+  -- | UnaryExpression UnaryOperator Expression
   deriving (Show, Eq)
 --   | StringLiteral String
 --   | BoolLiteral Bool
@@ -31,15 +39,36 @@ data Op = Plus
       | Or
   deriving (Show, Eq)
 
-data UnaryOperator = Not
-  deriving (Show, Eq)
 
+-- data UnaryOperator = Not
+--       | Increment
+--       | Decrement             
+--   deriving (Show, Eq)
 
 data Type = IntType 
       | BoolType 
       | StringType
   deriving (Show, Eq)
 
+data Assignment = Assign Expression
+      | Init Type String
+      | SetValue Expression String
+      | Declaration Expression String
+      -- | UnOp UnaryOperator Expression
+    deriving (Show, Eq)
+  
+  {- 
+  | While Expression [Statement]
+  | For Identifier Expression Expression [Statement]
+  | FunctionCall Identifier [Expression]
+  | Return (Maybe Expression)
+
+data FunctionDef = FunctionDef Type Identifier [(Type, Identifier)] [Statement]
+  deriving (Show, Eq)
+
+data Program = Program [FunctionDef]
+  deriving (Show, Eq)
+-}
 
 {-
 

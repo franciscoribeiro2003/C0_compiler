@@ -1,5 +1,5 @@
 {
-module Lexer where
+module Lexer where 
 }
 
 %wrapper "basic"
@@ -42,6 +42,8 @@ tokens :-
     "||"                  { \_ -> OR }
     "!"                   { \_ -> NOT }
     "="                   { \_ -> ASSIGN }
+    "++"                  { \_ -> INCREMENT }
+    "--"                  { \_ -> DECREMENT }
 
     -- delimiters
     ";"                   { \_ -> SEMICOLON }
@@ -89,6 +91,8 @@ data Token
     | LOWEREQ
     | GREATERT
     | GREATEREQ
+    | INCREMENT
+    | DECREMENT
     | AND
     | OR
     | NOT
