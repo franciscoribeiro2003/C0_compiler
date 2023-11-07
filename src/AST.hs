@@ -2,6 +2,16 @@ module AST where
 
 type Identifier = String
 
+{- 
+data Function = Function Type Identifier Param Statement
+            | Program [Function]
+  deriving (Show, Eq)
+
+data Param = Params [Param]
+          | Param Type Identifier
+  deriving (Show, Eq)
+ -}
+ 
 data Statement = Statment Assignment
                | Statments [Statement]
                | If Expression Statement
@@ -11,12 +21,14 @@ data Statement = Statment Assignment
                | For AssignmentFor Expression AssignmentFor Statement
             deriving (Eq, Show)
 
+
 data AssignmentFor = EmptyFor
   | InitFor Type Identifier Expression
   | SetValueFor Expression Identifier
   | IncrementFor Identifier
   | DecrementFor Identifier
   deriving (Show, Eq)
+
 
 data Assignment = Assignments [Assignment]
   | Assign Expression
@@ -27,6 +39,7 @@ data Assignment = Assignments [Assignment]
   | Decrement Identifier
   | PrintInt Expression
   deriving (Show, Eq)
+
 
 data Expression
   = Var Identifier
@@ -39,6 +52,7 @@ data Expression
   | ScanInt
   | ScanStr
   deriving (Show, Eq)
+
 
 data Op = Plus 
       | Minus 
@@ -54,6 +68,7 @@ data Op = Plus
       | And 
       | Or
   deriving (Show, Eq)
+
 
 data Type = IntType 
       | BoolType 

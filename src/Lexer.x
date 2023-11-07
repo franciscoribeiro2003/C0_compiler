@@ -7,7 +7,7 @@ module Lexer where
 $digit = [0-9]
 $letter = [a-zA-Z]
 $underscore = _
-$whitespace = [\ \t\n\r\v]
+$whitespace = [\ \t\n\r\v\b\r\f\a]
 
 tokens :-
     $whitespace+          ;
