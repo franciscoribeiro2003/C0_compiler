@@ -1,26 +1,86 @@
 module AST where
 
-data Type = Int
-          | Bool
-          | String
-          deriving Show
+type Identifier = String
 
--- Definindo o tipo da AST
-data Exp = Add Exp Exp
-         | Subtraction Exp Exp
-         | Multiplication Exp Exp
-         | Division Exp Exp
-         | Module Exp Exp
-         | Equal Exp Exp
-         | Compare Exp Exp
-         | NotEquals Exp Exp
-         | Less Exp Exp
-         | LessEquals Exp Exp
-         | Greater Exp Exp
-         | GreaterEquals Exp Exp
-         | And Exp Exp
-         | Or Exp Exp
-         deriving Show
+data Assignment = Assignment Identifier Expression
+  deriving (Show, Eq)
 
--- data parseError = ParseError String
---                 deriving Show
+data Expression
+  = Var Identifier
+  | Num Int
+  | Binop Op Expression Expression
+  | UnaryExpression UnaryOperator Expression
+  deriving (Show, Eq)
+--   | StringLiteral String
+--   | BoolLiteral Bool
+--   | IntLiteral Int
+--   | BinaryExpression BinaryOperator Expression Expression
+
+data Op = Plus 
+      | Minus 
+      | Mult 
+      | Div 
+      | Mod 
+      | Equal 
+      | Nequal 
+      | Lowert 
+      | Lowereq 
+      | Greatert
+      | Greatereq 
+      | And 
+      | Or
+  deriving (Show, Eq)
+
+data UnaryOperator = Not
+  deriving (Show, Eq)
+
+
+data Type = IntType 
+      | BoolType 
+      | StringType
+  deriving (Show, Eq)
+
+
+{-
+
+data Program = Program [Statement] deriving (Eq, Show)
+
+data Statement
+  = AssignStatement T_Ident Expression
+  | IfStatement Expression [Statement] [Statement]
+  | WhileStatement Expression [Statement]
+  | ForStatement T_Ident Expression Expression [Statement]
+  | ReturnStatement Expression
+  | PrintIntStatement Expression
+  | PrintStringStatement Expression
+  deriving (Eq, Show)
+
+data Expression
+  = IntLiteral T_Num
+  | StringLiteral T_String
+  | BoolLiteral T_Bool
+  | Identifier T_Ident
+  | BinaryExpression T_Plus Expression Expression
+  | UnaryExpression T_Not Expression
+  deriving (Eq, Show)
+
+data BinaryOperator
+  = Plus
+  | Minus
+  | Mult
+  | Div
+  | Mod
+  | Equal
+  | NotEqual
+  | Less
+  | LessEqual
+  | Greater
+  | GreaterEqual
+  | And
+  | Or
+  deriving (Eq, Show)
+
+data UnaryOperator
+  = Not
+  deriving (Eq, Show)
+ -}

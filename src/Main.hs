@@ -1,10 +1,8 @@
 module Main where
-
-import AST
-import Lexer
 import Parser
+import Lexer
 
 main :: IO ()
 main = do
   txt <- getLine
-  print (parse $ alexScanTokens txt)
+  print (parser $ alexScanTokens txt)

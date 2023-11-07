@@ -4,90 +4,97 @@ import Lexer
 import AST
 }
 
-%name parse
+%name parser
 %tokentype { Token }
 %error { parseError }
 
 %token
 
--- Palavras Chave
-"int"                  { T_Int }
-"float"                { T_Float }
-"char"                 { T_Char }
-"string"               { T_String }
-"bool"                 { T_Bool }
-"if"                   { T_If }
-"else"                 { T_Else }
-"while"                { T_While }
-"for"                  { T_For }
-"return"               { T_Return }
-"print_int"            { T_PrintInt }
-"print_float"          { T_PrintFloat }
-"print_char"           { T_PrintChar }
-"print_string"         { T_PrintString }
-"true"                 { T_True }
-"false"                { T_False }
+-- Palavras Reservadas
+STRING              { STRING }
+INT                 { INT }
+BOOL                { BOOL }
+"True"              { TRUE }
+"False"             { FALSE }
+if                  { IF }
+else                { ELSE }
+while               { WHILE }
+FOR                 { FOR }
+RETURN              { RETURN }
+"print_int"         { PRINT }
+"print_string"      { PRINT }
 
 -- Operadores
-"+"                    { T_Plus }
-"-"                    { T_Minus }
-"*"                    { T_Mult }
-"/"                    { T_Div }
-"%"                    { T_Mod }
-"="                    { T_Assign }
-"=="                   { T_Equal }
-"!="                   { T_NotEqual }
-"<"                    { T_Less }
-"<="                   { T_LessEqual }
-">"                    { T_Greater }
-">="                   { T_GreaterEqual }
-"!"                    { T_Not }
-"&&"                   { T_And }
-"||"                   { T_Or }
+"+"                   { PLUS }
+"-"                   { MINUS }
+"*"                   { MULT }
+"/"                   { DIV }
+"%"                   { MOD }
+"=="                  { EQUAL }
+"!="                  { NEQUAL }
+"<"                   { LOWERT }
+"<="                  { LOWEREQ }
+">"                   { GREATERT }
+">="                  { GREATEREQ }
+"&&"                  { AND }
+"||"                  { OR }
+"!"                   { NOT }
+"="                   { ASSIGN }
 
--- Delimitadores
-"("                    { T_LParen }
-")"                    { T_RParen }
-"{"                    { T_LBrace }
-"}"                    { T_RBrace }
-";"                    { T_SemiColon }
-","                    { T_Comma }
+-- Sinais de Pontuação
+";"                   { SEMICOLON }
+","                   { COMMA }
+"("                   { LPAREN }
+")"                   { RPAREN }
+"{"                   { LBRACE }
+"}"                   { RBRACE }
 
--- Literais
-num    { T_Num $$ }
-string { T_String $$ }
-ident  { T_Ident $$ }
+-- Identificadores
+ID               { ID $$ }
+NUM              { NUM $$ }
+STRLIT           { STRLIT $$ }
 
--- Precedences
+-- Precedência de Operadores
 %nonassoc "="
 %left "|" "&"
 %nonassoc "<" ">" "<=" ">=" "<>" "="
 %left "+" "-"
 %left "*" "/" "%"
+%right "!"
 
--- Programa
--- Programa: ListaDecl { Program $1 }
 
--- ListaDecl : Decl ListaDecl { $1 : $2 }
-
+-- Gramática
 
 %%
 
--- Type : INT { Int }
---      | STRING { String }
---      | BOOL { Bool }
+expression : ID { Var $1 }
+           | NUM { Num $1 }
+           | expression "+" expression {Binop Plus $1 $3 }
+           | expression "-" expression {Binop Minus $1 $3 }
+           | expression "*" expression {Binop Mult $1 $3 }
+           | expression "/" expression {Binop Div $1 $3 }
+           | expression "%" expression {Binop Mod $1 $3 }
+           | expression "==" expression {Binop Equal $1 $3 }
+           | expression "!=" expression {Binop Nequal $1 $3 }
+           | expression "<" expression {Binop Lowert $1 $3 }
+           | expression "<=" expression {Binop Lowereq $1 $3 }
+           | expression ">" expression {Binop Greatert $1 $3 }
+           | expression ">=" expression {Binop Greatereq $1 $3 }
+           | expression "&&" expression {Binop And $1 $3 }
+           | expression "||" expression {Binop Or $1 $3 }
+           | "!" expression {UnaryExpression Not $2 }
+           | "(" expression ")" { $2 }
+           --| STRLIT { StrLit $1 }
+           --| "True" { BoolLit True }
+           --| "False" { BoolLit False }
 
-Exp : Exp "+" Exp     { Add $1 $2 }
-    | Exp "-" Exp     { Subtraction $1 $2 }
-    | Exp "*" Exp     { Multiplication $1 $2 }
-    | Exp "/" Exp     { Division Div $1 $2 }
-    | Exp "%" Exp     { Module $1 $2 }
-    | Exp "=" Exp     { Equal $1 $2 }
-    | Exp "==" Exp    { Compare $1 $2 }
-    | Exp "!=" Exp    { NotEquals $1 $2 }
-    | Exp "<" Exp     { Less $1 $2}
-    | Exp "<=" Exp    { LessEquals $1 $2}
-    | Exp ">" Exp     { Greater $1 $2}
-    | Exp ">=" Exp    { GreaterEquals $1 $2}
-    | Exp "&&" Exp    { And $1 $2}
-    | Exp "||" Exp    { Or $1 $2}
+assignment : ID "=" expression ";" { Assignment $1 $3 }
+
+Type : INT     { IntType }
+     | BOOL    { BoolType }
+     | STRING  { StringType }
+
+{
+parseError :: [Token] -> a
+parseError _ = error "Parse error"
+}
