@@ -2,29 +2,29 @@ module AST where
 
 type Identifier = String
 
-
-{- data Assignment_List = AssignmentList1 Assignment Assignment_List
-                  | AssignmentList2 Assignment
-                  | AssignmentList3 Statement Assignment_List  
-                  | AssignmentList4 Assignment_List Statement 
-                deriving (Eq, Show)
- -}
-
 data Statement = Statment Assignment
+               | Statments [Statement]
                | If Expression Statement
                | If_Else Expression Statement Statement
                | While Expression Statement
                | Return Expression
+               | For AssignmentFor Expression AssignmentFor Statement
             deriving (Eq, Show)
 
-              
+data AssignmentFor = EmptyFor
+  | InitFor Type Identifier Expression
+  | SetValueFor Expression Identifier
+  | IncrementFor Identifier
+  | DecrementFor Identifier
+  deriving (Show, Eq)
+
 data Assignment = Assign Expression
   | Init Type Identifier
   | SetValue Expression Identifier
   | Declaration Expression Identifier
   deriving (Show, Eq)
   -- | UnOp UnOp Expression
-  
+
 data Expression
   = Var Identifier
   | Num Int

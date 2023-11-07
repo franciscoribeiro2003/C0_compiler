@@ -70,33 +70,38 @@ STRLIT           { STRLIT $$ }
 -- Gramática
 
 %%
-
+                
 -- UnOp : "!"  { Not }
 --      | "++" { Increment }
 --      | "--" { Decrement }
 
--- Assignment_List : Assignment Assignment_List { AssignmentList1 $1 $2 }
---                 | Assignment { AssignmentList2 $1}
---                 | Statment Assignment_List { AssignmentList3 $1 $2 }
---                 | Assignment_List Statment { AssignmentList4 $1 $2 }
+Statments : Statment { [$1] }
+          | Statments Statment { $1 ++ [$2] }
 
-Statment : Assignment { Statment $1}
-     | "if" "(" expression ")" Statment {If $3 $5 }
-     | "if" "(" expression ")" "{" Statment "}" {If $3 $6 }
-     | "if" "(" expression ")" Statment "else" Statment { If_Else $3 $5 $7 }
-     | "if" "(" expression ")" "{" Statment "}" "else" "{" Statment "}" { If_Else $3 $6 $10 }
-     | "while" "(" expression ")" Statment { While $3 $5 }
-     | "return" expression ";" { Return $2 }
-     -- | "if" "(" expression ")" Statment "else" Statment { If_Else $3 $5 $7 }
-     -- | "for" "(" Assignment ";" expression ";" Assignment ")" Statment { For $3 $5 $7 $9 }
-    -- | "{" Statment "}" Statment { BraceStatment $2 $4}     --Statment list
+Statment : Assignment                                                      { Statment $1 }
+     | "{" Statments "}"                                                   {Statments $2 }
+     | "if" "(" expression ")" Statment                                    { If $3 $5 }
+     | "if" "(" expression ")" Statment "else" Statment                    { If_Else $3 $5 $7 }
+     | "while" "(" expression ")" Statment                                 { While $3 $5 }
+     | "return" expression ";"                                             { Return $2 }
+     | "for" "(" AssignmentFor ";" expression ";" AssignmentFor ")" Statment { For $3 $5 $7 $9 }
+    --| "{" Statment "}" Statment { BraceStatment $2 $4}     --Statment list
+
+Assignment_List : Assignment Assignment_List { $1 : $2 }
+                | Assignment { [$1] }
 
 Assignment : expression { Assign $1 }
          | Type ID ";" { Init $1 $2 }
          | ID "=" expression ";" { SetValue $3 $1}
          | Type ID "=" expression ";" { Declaration $4 $2}
+         
          --| ID UnOp { UnOp $1 $2}
 
+AssignmentFor :  { EmptyFor }
+         | Type ID "=" expression { InitFor $1 $2 $4 }
+         | ID "=" expression { SetValueFor $3 $1}
+         | ID "++" { IncrementFor $1 }
+         | ID "--" { DecrementFor $1 }
 
 expression : ID { Var $1 }
            | NUM { Num $1 }
@@ -124,7 +129,6 @@ expression : ID { Var $1 }
 Type : INT     { IntType }
      | BOOL    { BoolType }
      | STRING  { StringType }
-
 
 
 {
