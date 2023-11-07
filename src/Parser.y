@@ -16,13 +16,15 @@ INT                 { INT }
 BOOL                { BOOL }
 "True"              { TRUE }
 "False"             { FALSE }
-if                  { IF }
-else                { ELSE }
-while               { WHILE }
-FOR                 { FOR }
-RETURN              { RETURN }
-"print_int"         { PRINT }
-"print_string"      { PRINT }
+"if"                { IF }
+"else"              { ELSE }
+"while"             { WHILE }
+"for"               { FOR }
+"return"            { RETURN }
+"print_int"         { PRINT_INT }
+"print_string"      { PRINT_STR }
+"scan_int"          { SCAN_INT }
+"scan_string"       { SCAN_STR }
 
 -- Operadores
 "+"                   { PLUS }
@@ -69,26 +71,31 @@ STRLIT           { STRLIT $$ }
 
 %%
 
--- UnOp : "++" { Increment }
+-- UnOp : "!"  { Not }
+--      | "++" { Increment }
 --      | "--" { Decrement }
 
--- ifStatement : if "(" expression ")" "{" statements "}" else "{" statements "}"
---           --   { IfStatement $3 $6 (Just $10) }
---           -- | if "(" expression ")" "{" statements "}"
---           --   { IfStatement $3 $6 Nothing }
+-- Assignment_List : Assignment Assignment_List { AssignmentList1 $1 $2 }
+--                 | Assignment { AssignmentList2 $1}
+--                 | Statment Assignment_List { AssignmentList3 $1 $2 }
+--                 | Assignment_List Statment { AssignmentList4 $1 $2 }
+
+Statment : Assignment { Statment $1}
+     | "if" "(" expression ")" Statment {If $3 $5 }
+     | "if" "(" expression ")" "{" Statment "}" {If $3 $6 }
+     | "if" "(" expression ")" Statment "else" Statment { If_Else $3 $5 $7 }
+     | "if" "(" expression ")" "{" Statment "}" "else" "{" Statment "}" { If_Else $3 $6 $10 }
+     | "while" "(" expression ")" Statment { While $3 $5 }
+     | "return" expression ";" { Return $2 }
+     -- | "if" "(" expression ")" Statment "else" Statment { If_Else $3 $5 $7 }
+     -- | "for" "(" Assignment ";" expression ";" Assignment ")" Statment { For $3 $5 $7 $9 }
+    -- | "{" Statment "}" Statment { BraceStatment $2 $4}     --Statment list
 
 Assignment : expression { Assign $1 }
          | Type ID ";" { Init $1 $2 }
          | ID "=" expression ";" { SetValue $3 $1}
          | Type ID "=" expression ";" { Declaration $4 $2}
-        --  | ID UnOp { UnaryOperator $1 $2}
-          
--- statement : Assignment { Assigning $1 }
---           -- | ifStatement { $1 }
-
--- statements : statement { [$1] }
---            | statements statement { $2 : $1 }
-
+         --| ID UnOp { UnOp $1 $2}
 
 
 expression : ID { Var $1 }
@@ -108,13 +115,9 @@ expression : ID { Var $1 }
            | expression "||" expression {Binop Or $1 $3 }
            | "(" expression ")" { $2 }
            --| "!" expression {UnaryExpression Not $2 }
-           --| "++" { Increment }
-           --| "--" { Decrement }
            --| STRLIT { StrLit $1 }
            --| "True" { BoolLit True }
            --| "False" { BoolLit False }
-
---assignment : ID "=" expression ";" { Assignment $1 $3 }
           
 
 
@@ -128,16 +131,3 @@ Type : INT     { IntType }
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 }
-{- 
-statement : assignment { $1 }
-          | ifStatement { $1 }
-
-
-statements : statement { [$1] }
-           | statements statement { $2 : $1 }
-
-
-
-
-
- -}

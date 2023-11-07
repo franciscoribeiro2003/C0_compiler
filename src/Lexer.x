@@ -23,8 +23,10 @@ tokens :-
     "while"               { \_ -> WHILE }
     "for"                 { \_ -> FOR }
     "return"              { \_ -> RETURN }
-    "print_int"           { \_ -> PRINT }
-    "print_string"        { \_ -> PRINT }
+    "print_int"           { \_ -> PRINT_INT }
+    "print_str"           { \_ -> PRINT_STR }
+    "scan_int"            { \_ -> SCAN_INT }
+    "scan_str"            { \_ -> SCAN_STR }
 
     -- operators
     "+"                   { \_ -> PLUS }
@@ -79,7 +81,10 @@ data Token
     | WHILE
     | FOR
     | RETURN
-    | PRINT
+    | PRINT_INT
+    | PRINT_STR
+    | SCAN_INT
+    | SCAN_STR
     | PLUS
     | MINUS
     | MULT

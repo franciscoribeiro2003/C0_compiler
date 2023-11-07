@@ -2,27 +2,39 @@ module AST where
 
 type Identifier = String
 
-{- data Assignment = Assignment Identifier Expression
-  deriving (Show, Eq) -}
 
+{- data Assignment_List = AssignmentList1 Assignment Assignment_List
+                  | AssignmentList2 Assignment
+                  | AssignmentList3 Statement Assignment_List  
+                  | AssignmentList4 Assignment_List Statement 
+                deriving (Eq, Show)
+ -}
 
- 
-data Statement
-    = Assigning Identifier Expression
-  -- | IfStatement Expression [Statement] (Maybe [Statement])
+data Statement = Statment Assignment
+               | If Expression Statement
+               | If_Else Expression Statement Statement
+               | While Expression Statement
+               | Return Expression
+            deriving (Eq, Show)
+
+              
+data Assignment = Assign Expression
+  | Init Type Identifier
+  | SetValue Expression Identifier
+  | Declaration Expression Identifier
   deriving (Show, Eq)
+  -- | UnOp UnOp Expression
   
-
 data Expression
   = Var Identifier
   | Num Int
   | Binop Op Expression Expression
-  -- | UnaryExpression UnaryOperator Expression
   deriving (Show, Eq)
---   | StringLiteral String
---   | BoolLiteral Bool
---   | IntLiteral Int
---   | BinaryExpression BinaryOperator Expression Expression
+-- | UnaryExpression UnaryOperator Expression
+-- | StringLiteral String
+-- | BoolLiteral Bool
+-- | IntLiteral Int
+-- | BinaryExpression BinaryOperator Expression Expression
 
 data Op = Plus 
       | Minus 
@@ -40,16 +52,19 @@ data Op = Plus
   deriving (Show, Eq)
 
 
--- data UnaryOperator = Not
---       | Increment
---       | Decrement             
---   deriving (Show, Eq)
+{- 
+data UnOp = Not
+      | Increment
+      | Decrement             
+  deriving (Show, Eq)
+ -}
 
 data Type = IntType 
       | BoolType 
       | StringType
   deriving (Show, Eq)
 
+  {- 
 data Assignment = Assign Expression
       | Init Type String
       | SetValue Expression String
@@ -57,7 +72,6 @@ data Assignment = Assign Expression
       -- | UnOp UnaryOperator Expression
     deriving (Show, Eq)
   
-  {- 
   | While Expression [Statement]
   | For Identifier Expression Expression [Statement]
   | FunctionCall Identifier [Expression]
