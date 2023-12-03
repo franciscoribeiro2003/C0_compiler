@@ -4,7 +4,7 @@ module Lexer where
 
 %wrapper "basic"
 
-$whitespace     = [\ \t\n\f\v\r]
+$white     = [\ \t\n\f\v\r]
 $digit     = [0-9]
 $graphic   = $printable
 
@@ -13,10 +13,10 @@ $graphic   = $printable
 
 tokens :-
 
-    -- ignore whitespace
-    whitespace+                  ;
+    -- ignore white
+    $white+                  ;
 
-    -- comments
+    -- ignore comments
     "//".*                  ;
     "/*"(\s|.)[^\/]*"*/"    ;
 
@@ -34,8 +34,9 @@ tokens :-
     print_int               { \_ -> PRINTINT_TOK }
     scan_int                { \_ -> SCANINT_TOK }
     print_str               { \_ -> PRINTSTR_TOK }
+    read_int                { \_ -> READINT_TOK }
 
-    -- tokens 
+    -- tokens
     $digit+                 { \s -> NUM_TOK (read s) }
     @id                     { \s -> VAR_TOK s }
     @String                 { \s -> STRING_TOK(read s) }
@@ -102,6 +103,7 @@ data Token
   | BOOL_DEF_TOK
   | PRINTINT_TOK
   | SCANINT_TOK
+  | READINT_TOK
   | STRING_DEF_TOK
   | PRINTSTR_TOK
   | INCR_TOK

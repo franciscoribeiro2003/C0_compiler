@@ -13,11 +13,11 @@ data Function = Function Type String [Declaration] [Statement]
   deriving Show
 
 
-data Operation = PreIncrement String
+data Operation = AssignOp String Exp
         | PosIncrement String
-        | PreDecrement String
         | PosDecrement String
-        | AssignOp String Exp
+        | PreIncrement String
+        | PreDecrement String
   deriving Show
 
 
@@ -39,37 +39,37 @@ data CompOperator = Lowert
 
 
 data StatementOp = AssignStm String Exp
+              | ScanInt String
               | Init Type String
               | Declaration Type String Exp
-              | ScanInt String
   deriving Show
 
 
-data ForOperation = ForAssign String Exp
+data ForOperation = EmptyFor
+                | ForAssign String Exp
                 | ForDeclaration Type String Exp
-                | EmptyFor
   deriving Show
 
 
 data Statement = VarOp StatementOp
-        | If CompareExpression Statement
         | IfElse CompareExpression Statement Statement
+        | If CompareExpression Statement
         | While CompareExpression Statement
         | For ForOperation CompareExpression Operation Statement
+        | StatementsBlock [Statement]
         | FunctionCallStm String [Exp]
         | PrintInt Exp
         | PrintStr Exp
-        | StatementsBlock [Statement]
-        | Return Exp
+        | Return [Exp]
   deriving Show
 
 
 data Exp = Num Int
          | Str String
          | Var String
-         | BooleanConst Bool
-         | Op BinOperator Exp Exp
          | FunctionCallExp String [Exp]
+         | Op BinOperator Exp Exp
+         | BooleanConst Bool
   deriving Show
 
 

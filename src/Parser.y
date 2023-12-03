@@ -66,6 +66,7 @@ for { FOR_TOK }
 print_int { PRINTINT_TOK }
 scan_int  { SCANINT_TOK }
 print_str { PRINTSTR_TOK }
+read_int  { READINT_TOK }
 
 -- associatividade e precedência
 %left "<" ">" "==" "!=" ">=" "<=" "&&" "||"
@@ -93,7 +94,7 @@ Statement : StatementOp                                                         
           | id '(' Expressions ')' ';'                                          { FunctionCallStm $1 $3 }
           | print_int '(' Expression ')' ';'                                    { PrintInt $3 }
           | print_str '(' Expression ')' ';'                                    { PrintStr $3 }
-          | return Expression ';'                                              { Return $2 }
+          | return Expressions ';'                                              { Return $2 }
 
 
 Expression : num                        { Num $1}
@@ -138,7 +139,7 @@ CompareExpression : Expression "==" Expression                   { Comp Equal $1
                   | CompareExpression "||" CompareExpression     { Or $1 $3 }
                   | '!' CompareExpression                        { Not $2 }
                   | id '(' Expressions ')'                       { FunctionCallComp $1 $3 }
-         
+
 
 Statements : {- empty -}             { [] }
           | Statements Statement     { $1 ++ [$2] }
