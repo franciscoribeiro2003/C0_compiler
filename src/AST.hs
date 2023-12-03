@@ -1,76 +1,81 @@
 module AST where
 
-type Identifier = String
-
-{- 
-data Function = Function Type Identifier Param Statement
-            | Program [Function]
-  deriving (Show, Eq)
-
-data Param = Params [Param]
-          | Param Type Identifier
-  deriving (Show, Eq)
- -}
- 
-data Statement = Statment Assignment
-               | Statments [Statement]
-               | If Expression Statement
-               | If_Else Expression Statement Statement
-               | While Expression Statement
-               | Return Expression
-               | For AssignmentFor Expression AssignmentFor Statement
-            deriving (Eq, Show)
+type Declaration = (Type, String)
 
 
-data AssignmentFor = EmptyFor
-  | InitFor Type Identifier Expression
-  | SetValueFor Expression Identifier
-  | IncrementFor Identifier
-  | DecrementFor Identifier
-  deriving (Show, Eq)
+data Type = IntType
+          | BoolType
+          | StringType
+  deriving Show
 
 
-data Assignment = Assignments [Assignment]
-  | Assign Expression
-  | Init Type Identifier
-  | SetValue Expression Identifier
-  | Declaration Expression Identifier
-  | Increment Identifier
-  | Decrement Identifier
-  | PrintInt Expression
-  deriving (Show, Eq)
+data Function = Function Type String [Declaration] [Statement]
+  deriving Show
 
 
-data Expression
-  = Var Identifier
-  | Num Int
-  | Binop Op Expression Expression
-  | Op Expression
-  | Not Expression
-  | Verdadeiro
-  | Falso
-  | ScanInt
-  | ScanStr
-  deriving (Show, Eq)
+data Operation = PreIncrement String
+        | PosIncrement String
+        | PreDecrement String
+        | PosDecrement String
+        | AssignOp String Exp
+  deriving Show
 
 
-data Op = Plus 
-      | Minus 
-      | Mult 
-      | Div 
-      | Mod 
-      | Equal 
-      | Nequal 
-      | Lowert 
-      | Lowereq 
-      | Greatert
-      | Greatereq 
-      | And 
-      | Or
-  deriving (Show, Eq)
+data BinOperator = Add
+              | Minus
+              | Mult
+              | Div
+              | Mod
+  deriving Show
 
 
-data Type = IntType 
-      | BoolType 
-      | StringType
-  deriving (Show, Eq)
+data CompOperator = Lowert
+              | Greatert
+              | Lowereq
+              | Greatereq
+              | Equal
+              | Nequal
+  deriving Show
+
+
+data StatementOp = AssignStm String Exp
+              | Init Type String
+              | Declaration Type String Exp
+              | ScanInt String
+  deriving Show
+
+
+data ForOperation = ForAssign String Exp
+                | ForDeclaration Type String Exp
+                | EmptyFor
+  deriving Show
+
+
+data Statement = VarOp StatementOp
+        | If CompareExpression Statement
+        | IfElse CompareExpression Statement Statement
+        | While CompareExpression Statement
+        | For ForOperation CompareExpression Operation Statement
+        | FunctionCallStm String [Exp]
+        | PrintInt Exp
+        | PrintStr Exp
+        | StatementsBlock [Statement]
+        | Return Exp
+  deriving Show
+
+
+data Exp = Num Int
+         | Str String
+         | Var String
+         | BooleanConst Bool
+         | Op BinOperator Exp Exp
+         | FunctionCallExp String [Exp]
+  deriving Show
+
+
+data CompareExpression = Comp CompOperator Exp Exp
+                    | And CompareExpression CompareExpression
+                    | Or CompareExpression CompareExpression
+                    | Not CompareExpression
+                    | FunctionCallComp String [Exp]
+  deriving Show

@@ -4,20 +4,15 @@ import Lexer
 
 main :: IO ()
 main = do
-  txt <- getLine
-  print (parser $ alexScanTokens txt)
-
-{-
+  passed <- getContents
+  print (parser $ alexScanTokens passed)
 
 
+-- module Main where
 
----
- module Main where
+-- import Lexer
 
-import Lexer
-
-main :: IO ()
-main = do
-  txt <- getLine
-  print (alexScanTokens txt)
- -}
+-- main :: IO ()
+-- main = do
+--   txt <- getLine
+--   print (alexScanTokens txt)

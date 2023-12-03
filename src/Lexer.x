@@ -1,115 +1,110 @@
 {
-module Lexer where 
+module Lexer where
 }
 
 %wrapper "basic"
 
-$digit = [0-9]
-$letter = [a-zA-Z]
-$underscore = _
-$whitespace = [\ \t\n\r\v\b\r\f\a]
+$whitespace     = [\ \t\n\f\v\r]
+$digit     = [0-9]
+$graphic   = $printable
+
+@id        = [A-Za-z_][A-Za-z0-9_]*
+@String    = \" ($graphic # \")*\"
 
 tokens :-
-    $whitespace+          ;
 
-    -- keywords
-    "string"              { \_ -> STRING }
-    "int"                 { \_ -> INT }
-    "bool"                { \_ -> BOOL }
-    "true"                { \_ -> TRUE }
-    "false"               { \_ -> FALSE }
-    "if"                  { \_ -> IF }
-    "else"                { \_ -> ELSE }
-    "while"               { \_ -> WHILE }
-    "for"                 { \_ -> FOR }
-    "return"              { \_ -> RETURN }
-    "print_int"           { \_ -> PRINT_INT }
-    "print_str"           { \_ -> PRINT_STR }
-    "scan_int"            { \_ -> SCAN_INT }
-    "scan_str"            { \_ -> SCAN_STR }
-
-    -- operators
-    "+"                   { \_ -> PLUS }
-    "-"                   { \_ -> MINUS }
-    "*"                   { \_ -> MULT }
-    "/"                   { \_ -> DIV }
-    "%"                   { \_ -> MOD }
-    "=="                  { \_ -> EQUAL }
-    "!="                  { \_ -> NEQUAL }
-    "<"                   { \_ -> LOWERT }
-    "<="                  { \_ -> LOWEREQ }
-    ">"                   { \_ -> GREATERT }
-    ">="                  { \_ -> GREATEREQ }
-    "&&"                  { \_ -> AND }
-    "||"                  { \_ -> OR }
-    "!"                   { \_ -> NOT }
-    "="                   { \_ -> ASSIGN }
-    "++"                  { \_ -> INCREMENT }
-    "--"                  { \_ -> DECREMENT }
-
-    -- delimiters
-    ";"                   { \_ -> SEMICOLON }
-    ","                   { \_ -> COMMA }
-    "("                   { \_ -> LPAREN }
-    ")"                   { \_ -> RPAREN }
-    "{"                   { \_ -> LBRACE }
-    "}"                   { \_ -> RBRACE }
-
-    -- identifiers
-    $letter($letter|$digit|$underscore)* { \s -> ID s }
-
-    -- numbers
-    $digit+               { \s -> NUM (read s) }
-
-    -- strings
-    "\"([^\"\\]|\\.)*\""  { \s -> STRLIT (read s) }
+    -- ignore whitespace
+    whitespace+                  ;
 
     -- comments
-    "//".*                ;
-    "/*"(.|\n)*"*/"       ;
+    "//".*                  ;
+    "/*"(\s|.)[^\/]*"*/"    ;
 
+    -- keywords
+    if                      { \_ -> IF_TOK }
+    else                    { \_ -> ELSE_TOK }
+    while                   { \_ -> WHILE_TOK }
+    for                     { \_ -> FOR_TOK }
+    return                  { \_ -> RETURN_TOK }
+    int                     { \_ -> INT_DEF_TOK }
+    bool                    { \_ -> BOOL_DEF_TOK }
+    string                  { \_ -> STRING_DEF_TOK }
+    true                    { \s -> TRUE_TOK True }
+    false                   { \s -> FALSE_TOK False }
+    print_int               { \_ -> PRINTINT_TOK }
+    scan_int                { \_ -> SCANINT_TOK }
+    print_str               { \_ -> PRINTSTR_TOK }
+
+    -- tokens 
+    $digit+                 { \s -> NUM_TOK (read s) }
+    @id                     { \s -> VAR_TOK s }
+    @String                 { \s -> STRING_TOK(read s) }
+
+    -- operators
+    "+"                     { \_ -> PLUS_TOK }
+    "-"                     { \_ -> MINUS_TOK }
+    "++"                    { \_ -> INCR_TOK }
+    "--"                    { \_ -> DECR_TOK }
+    "*"                     { \_ -> MULT_TOK }
+    "/"                     { \_ -> DIV_TOK }
+    "%"                     { \_ -> MOD_TOK }
+    "("                     { \_ -> LPAREN_TOK }
+    ")"                     { \_ -> RPAREN_TOK }
+    "{"                     { \_ -> LBRACE_TOK }
+    "}"                     { \_ -> RBRACE_TOK }
+    "="                     { \_ -> ASSIGN_TOK }
+    "=="                    { \_ -> EQUAL_TOK }
+    "!="                    { \_ -> NEQUAL_TOK }
+    "<="                    { \_ -> LTOE_TOK }
+    ">="                    { \_ -> GTOE_TOK }
+    "<"                     { \_ -> LTHEN_TOK }
+    ">"                     { \_ -> GTHEN_TOK }
+    ";"                     { \_ -> SEMICOLON_TOK }
+    ","                     { \_ -> COLON_TOK }
+    "&&"                    { \_ -> AND_TOK }
+    "||"                    { \_ -> OR_TOK }
+    "!"                     { \_ -> NOT_TOK}
 
 {
 data Token
-    = STRING
-    | INT
-    | BOOL
-    | TRUE
-    | FALSE
-    | IF
-    | ELSE
-    | WHILE
-    | FOR
-    | RETURN
-    | PRINT_INT
-    | PRINT_STR
-    | SCAN_INT
-    | SCAN_STR
-    | PLUS
-    | MINUS
-    | MULT
-    | DIV
-    | MOD
-    | EQUAL
-    | NEQUAL
-    | LOWERT
-    | LOWEREQ
-    | GREATERT
-    | GREATEREQ
-    | INCREMENT
-    | DECREMENT
-    | AND
-    | OR
-    | NOT
-    | ASSIGN
-    | SEMICOLON
-    | COMMA
-    | LPAREN
-    | RPAREN
-    | LBRACE
-    | RBRACE
-    | ID String
-    | NUM Int
-    | STRLIT String
-    deriving (Show, Eq)
+  = NUM_TOK Int
+  | STRING_TOK String
+  | TRUE_TOK Bool
+  | FALSE_TOK Bool
+  | VAR_TOK String
+  | PLUS_TOK
+  | MINUS_TOK
+  | MULT_TOK
+  | DIV_TOK
+  | MOD_TOK
+  | LPAREN_TOK
+  | RPAREN_TOK
+  | LBRACE_TOK
+  | RBRACE_TOK
+  | IF_TOK
+  | ELSE_TOK
+  | WHILE_TOK
+  | FOR_TOK
+  | ASSIGN_TOK
+  | LTHEN_TOK
+  | GTHEN_TOK
+  | LTOE_TOK
+  | GTOE_TOK
+  | EQUAL_TOK
+  | NEQUAL_TOK
+  | SEMICOLON_TOK
+  | COLON_TOK
+  | RETURN_TOK
+  | NOT_TOK
+  | AND_TOK
+  | OR_TOK
+  | INT_DEF_TOK
+  | BOOL_DEF_TOK
+  | PRINTINT_TOK
+  | SCANINT_TOK
+  | STRING_DEF_TOK
+  | PRINTSTR_TOK
+  | INCR_TOK
+  | DECR_TOK
+  deriving (Eq, Show)
 }
