@@ -66,7 +66,6 @@ for { FOR_TOK }
 print_int { PRINTINT_TOK }
 scan_int  { SCANINT_TOK }
 print_str { PRINTSTR_TOK }
-read_int  { READINT_TOK }
 
 -- associatividade e precedência
 %left "<" ">" "==" "!=" ">=" "<=" "&&" "||"
@@ -100,6 +99,7 @@ Statement : StatementOp                                                         
 Expression : num                        { Num $1}
           | str                         { Str $1}
           | id                          { Var $1 }
+          | scan_int '(' ')'            { ScanIntExp }
           | '(' Expression ')'          { $2 }
           | id '(' Expressions ')'      { FunctionCallExp $1 $3 }
           | Expression '+' Expression   { Op Add $1 $3 }
@@ -119,8 +119,8 @@ Operation : id '=' Expression { AssignOp $1 $3 }
 
 
 StatementOp : id '=' Expression ';'     { AssignStm $1 $3 }
-          | id '=' scan_int '(' ')' ';' { ScanInt $1 }
-          | Type id ';'                 { Init $1 $2 }
+          | id '=' scan_int '(' ')' ';' { AssignScanInt $1 }
+          | Type Expressions ';'        { Init $1 $2 }
           | Type id '=' Expression ';'  { Declaration $1 $2 $4 }
 
 

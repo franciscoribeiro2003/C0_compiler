@@ -39,8 +39,8 @@ data CompOperator = Lowert
 
 
 data StatementOp = AssignStm String Exp
-              | ScanInt String
-              | Init Type String
+              | AssignScanInt String
+              | Init Type [Exp]
               | Declaration Type String Exp
   deriving Show
 
@@ -67,6 +67,7 @@ data Statement = VarOp StatementOp
 data Exp = Num Int
          | Str String
          | Var String
+         | ScanIntExp
          | FunctionCallExp String [Exp]
          | Op BinOperator Exp Exp
          | BooleanConst Bool
