@@ -4,12 +4,12 @@ module Lexer where
 
 %wrapper "basic"
 
-$white     = [\ \t\n\f\v]
 $digit     = [0-9]
 $graphic   = $printable
+$white     = [\ \t\n\f\v]
 
-@id        = [A-Za-z_][A-Za-z0-9_]*
 @String    = \" ($graphic # \")*\"
+@id        = [A-Za-z_][A-Za-z0-9_]*
 
 tokens :-
 
@@ -23,90 +23,90 @@ tokens :-
     "/*"([^\*]|[\n]|("*"+([^\*\/]|[\n])))*"*"+"/"  ;
 
     -- keywords
-    if                      { \_ -> IF_TOK }
-    else                    { \_ -> ELSE_TOK }
-    while                   { \_ -> WHILE_TOK }
-    for                     { \_ -> FOR_TOK }
-    return                  { \_ -> RETURN_TOK }
-    int                     { \_ -> INT_DEF_TOK }
-    bool                    { \_ -> BOOL_DEF_TOK }
-    string                  { \_ -> STRING_DEF_TOK }
-    true                    { \s -> TRUE_TOK True }
-    false                   { \s -> FALSE_TOK False }
-    print_int               { \_ -> PRINTINT_TOK }
-    scan_int                { \_ -> SCANINT_TOK }
-    print_str               { \_ -> PRINTSTR_TOK }
+    string                  { \_ -> STRING_DEF_TOKEN }
+    true                    { \s -> TRUE_TOKEN True }
+    false                   { \s -> FALSE_TOKEN False }
+    if                      { \_ -> IF_TOKEN }
+    else                    { \_ -> ELSE_TOKEN }
+    while                   { \_ -> WHILE_TOKEN }
+    for                     { \_ -> FOR_TOKEN }
+    return                  { \_ -> RETURN_TOKEN }
+    int                     { \_ -> INT_DEF_TOKEN }
+    bool                    { \_ -> BOOL_DEF_TOKEN }
+    -- scan_int                { \_ -> SCANINT_TOKEN }
+    -- print_int               { \_ -> PRINTINT_TOKEN }
+    -- print_str               { \_ -> PRINTSTR_TOKEN }
 
     -- tokens
-    $digit+                 { \s -> NUM_TOK (read s) }
-    @id                     { \s -> VAR_TOK s }
-    @String                 { \s -> STRING_TOK(read s) }
+    $digit+                 { \s -> NUM_TOKEN (read s) }
+    @String                 { \s -> STRING_TOKEN(read s) }
+    @id                     { \s -> VAR_TOKEN s }
 
     -- operators
-    "+"                     { \_ -> PLUS_TOK }
-    "-"                     { \_ -> MINUS_TOK }
-    "++"                    { \_ -> INCR_TOK }
-    "--"                    { \_ -> DECR_TOK }
-    "*"                     { \_ -> MULT_TOK }
-    "/"                     { \_ -> DIV_TOK }
-    "%"                     { \_ -> MOD_TOK }
-    "("                     { \_ -> LPAREN_TOK }
-    ")"                     { \_ -> RPAREN_TOK }
-    "{"                     { \_ -> LBRACE_TOK }
-    "}"                     { \_ -> RBRACE_TOK }
-    "="                     { \_ -> ASSIGN_TOK }
-    "=="                    { \_ -> EQUAL_TOK }
-    "!="                    { \_ -> NEQUAL_TOK }
-    "<="                    { \_ -> LTOE_TOK }
-    ">="                    { \_ -> GTOE_TOK }
-    "<"                     { \_ -> LTHEN_TOK }
-    ">"                     { \_ -> GTHEN_TOK }
-    ";"                     { \_ -> SEMICOLON_TOK }
-    ","                     { \_ -> COLON_TOK }
-    "&&"                    { \_ -> AND_TOK }
-    "||"                    { \_ -> OR_TOK }
-    "!"                     { \_ -> NOT_TOK}
+    "++"                    { \_ -> INCR_TOKEN }
+    "--"                    { \_ -> DECR_TOKEN }
+    "+"                     { \_ -> PLUS_TOKEN }
+    "-"                     { \_ -> MINUS_TOKEN }
+    "*"                     { \_ -> MULT_TOKEN }
+    "/"                     { \_ -> DIV_TOKEN }
+    "%"                     { \_ -> MOD_TOKEN }
+    "("                     { \_ -> LPAREN_TOKEN }
+    ")"                     { \_ -> RPAREN_TOKEN }
+    "{"                     { \_ -> LBRACE_TOKEN }
+    "}"                     { \_ -> RBRACE_TOKEN }
+    "="                     { \_ -> ASSIGN_TOKEN }
+    "=="                    { \_ -> EQUAL_TOKEN }
+    "!="                    { \_ -> NEQUAL_TOKEN }
+    "<="                    { \_ -> LTOE_TOKEN }
+    "<"                     { \_ -> LTHEN_TOKEN }
+    ">="                    { \_ -> GTOE_TOKEN }
+    ">"                     { \_ -> GTHEN_TOKEN }
+    ";"                     { \_ -> SEMICOLON_TOKEN }
+    ","                     { \_ -> COLON_TOKEN }
+    "&&"                    { \_ -> AND_TOKEN }
+    "||"                    { \_ -> OR_TOKEN }
+    "!"                     { \_ -> NOT_TOKEN}
 
 {
 data Token
-  = NUM_TOK Int
-  | STRING_TOK String
-  | TRUE_TOK Bool
-  | FALSE_TOK Bool
-  | VAR_TOK String
-  | PLUS_TOK
-  | MINUS_TOK
-  | MULT_TOK
-  | DIV_TOK
-  | MOD_TOK
-  | LPAREN_TOK
-  | RPAREN_TOK
-  | LBRACE_TOK
-  | RBRACE_TOK
-  | IF_TOK
-  | ELSE_TOK
-  | WHILE_TOK
-  | FOR_TOK
-  | ASSIGN_TOK
-  | LTHEN_TOK
-  | GTHEN_TOK
-  | LTOE_TOK
-  | GTOE_TOK
-  | EQUAL_TOK
-  | NEQUAL_TOK
-  | SEMICOLON_TOK
-  | COLON_TOK
-  | RETURN_TOK
-  | NOT_TOK
-  | AND_TOK
-  | OR_TOK
-  | INT_DEF_TOK
-  | BOOL_DEF_TOK
-  | PRINTINT_TOK
-  | SCANINT_TOK
-  | STRING_DEF_TOK
-  | PRINTSTR_TOK
-  | INCR_TOK
-  | DECR_TOK
+  = NUM_TOKEN Int
+  | STRING_TOKEN String
+  | TRUE_TOKEN Bool
+  | FALSE_TOKEN Bool
+  | VAR_TOKEN String
+  | PLUS_TOKEN
+  | MINUS_TOKEN
+  | MULT_TOKEN
+  | DIV_TOKEN
+  | MOD_TOKEN
+  | LPAREN_TOKEN
+  | RPAREN_TOKEN
+  | LBRACE_TOKEN
+  | RBRACE_TOKEN
+  | IF_TOKEN
+  | ELSE_TOKEN
+  | WHILE_TOKEN
+  | FOR_TOKEN
+  | PRINTINT_TOKEN
+  | SCANINT_TOKEN
+  | STRING_DEF_TOKEN
+  | PRINTSTR_TOKEN
+  | INCR_TOKEN
+  | DECR_TOKEN
+  | ASSIGN_TOKEN
+  | LTHEN_TOKEN
+  | GTHEN_TOKEN
+  | LTOE_TOKEN
+  | GTOE_TOKEN
+  | EQUAL_TOKEN
+  | NEQUAL_TOKEN
+  | SEMICOLON_TOKEN
+  | COLON_TOKEN
+  | RETURN_TOKEN
+  | NOT_TOKEN
+  | AND_TOKEN
+  | OR_TOKEN
+  | INT_DEF_TOKEN
+  | BOOL_DEF_TOKEN
   deriving (Eq, Show)
 }

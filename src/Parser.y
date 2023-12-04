@@ -11,61 +11,61 @@ import AST
 %token
 
 -- palavras reservadas
-num      { NUM_TOK $$ }
-str      { STRING_TOK $$ }
-id       { VAR_TOK $$ }
-true     { TRUE_TOK $$ }
-false    { FALSE_TOK $$ }
-return   { RETURN_TOK }
+true     { TRUE_TOKEN $$ }
+false    { FALSE_TOKEN $$ }
+return   { RETURN_TOKEN }
+num      { NUM_TOKEN $$ }
+str      { STRING_TOKEN $$ }
+id       { VAR_TOKEN $$ }
 
 -- tipos
-int  { INT_DEF_TOK }
-bool { BOOL_DEF_TOK }
-string { STRING_DEF_TOK }
+int  { INT_DEF_TOKEN }
+bool { BOOL_DEF_TOKEN }
+string { STRING_DEF_TOKEN }
 
 -- delimitadores
-'(' { LPAREN_TOK }
-')' { RPAREN_TOK }
-'=' { ASSIGN_TOK }
-'{' { LBRACE_TOK }
-'}' { RBRACE_TOK }
+'=' { ASSIGN_TOKEN }
+'{' { LBRACE_TOKEN }
+'}' { RBRACE_TOKEN }
+'(' { LPAREN_TOKEN }
+')' { RPAREN_TOKEN }
 
 -- operadores
-'+' { PLUS_TOK }
-'-' { MINUS_TOK }
-'*' { MULT_TOK }
-'/' { DIV_TOK }
-'%' { MOD_TOK }
-';' { SEMICOLON_TOK }
-',' { COLON_TOK }
-"++"{ INCR_TOK }
-"--"{ DECR_TOK }
+"++"{ INCR_TOKEN }
+"--"{ DECR_TOKEN }
+'*' { MULT_TOKEN }
+'/' { DIV_TOKEN }
+'%' { MOD_TOKEN }
+';' { SEMICOLON_TOKEN }
+',' { COLON_TOKEN }
+'+' { PLUS_TOKEN }
+'-' { MINUS_TOKEN }
 
 -- comparadores
-"=="{ EQUAL_TOK }
-"!="{ NEQUAL_TOK }
-"<" { LTHEN_TOK }
-">" { GTHEN_TOK }
-">="{ GTOE_TOK }
-"<="{ LTOE_TOK }
+"=="{ EQUAL_TOKEN }
+"!="{ NEQUAL_TOKEN }
+"<" { LTHEN_TOKEN }
+"<="{ LTOE_TOKEN }
+">" { GTHEN_TOKEN }
+">="{ GTOE_TOKEN }
 
 -- operadores lógicos
-"&&" { AND_TOK }
-"||" { OR_TOK }
-'!'  { NOT_TOK }
+"&&" { AND_TOKEN }
+"||" { OR_TOKEN }
+'!'  { NOT_TOKEN }
 
 -- condicionais
-if { IF_TOK }
-else { ELSE_TOK }
+if { IF_TOKEN }
+else { ELSE_TOKEN }
 
 --ciclos
-while { WHILE_TOK }
-for { FOR_TOK }
+while { WHILE_TOKEN }
+for { FOR_TOKEN }
 
 -- input/output
-print_int { PRINTINT_TOK }
-scan_int  { SCANINT_TOK }
-print_str { PRINTSTR_TOK }
+-- print_int { PRINTINT_TOKEN }
+scan_int  { SCANINT_TOKEN }
+-- print_str { PRINTSTR_TOKEN }
 
 -- associatividade e precedência
 %left "<" ">" "==" "!=" ">=" "<=" "&&" "||"
@@ -91,15 +91,14 @@ Statement : StatementOp                                                         
           | for '(' ForOperation CompareExpression ';' Operation ')' Statement  { For $3 $4 $6 $8 }
           | '{' Statements '}'                                                  { StatementsBlock $2 }
           | id '(' Expressions ')' ';'                                          { FunctionCallStm $1 $3 }
-          | print_int '(' Expression ')' ';'                                    { PrintInt $3 }
-          | print_str '(' Expression ')' ';'                                    { PrintStr $3 }
           | return Expressions ';'                                              { Return $2 }
+          -- | print_int '(' Expression ')' ';'                                    { PrintInt $3 }
+          -- | print_str '(' Expression ')' ';'                                    { PrintStr $3 }
 
 
 Expression : num                        { Num $1}
           | str                         { Str $1}
           | id                          { Var $1 }
-          | scan_int '(' ')'            { ScanIntExp }
           | '(' Expression ')'          { $2 }
           | id '(' Expressions ')'      { FunctionCallExp $1 $3 }
           | Expression '+' Expression   { Op Add $1 $3 }
@@ -109,6 +108,7 @@ Expression : num                        { Num $1}
           | Expression '%' Expression   { Op Mod $1 $3 }
           | true                        { BooleanConst True }
           | false                       { BooleanConst False }
+          --| scan_int '(' ')'            { ScanIntExp }
 
 
 Operation : id '=' Expression { AssignOp $1 $3 }
@@ -119,9 +119,9 @@ Operation : id '=' Expression { AssignOp $1 $3 }
 
 
 StatementOp : id '=' Expression ';'     { AssignStm $1 $3 }
-          | id '=' scan_int '(' ')' ';' { AssignScanInt $1 }
           | Type Expressions ';'        { Init $1 $2 }
           | Type id '=' Expression ';'  { Declaration $1 $2 $4 }
+          -- | id '=' scan_int '(' ')' ';' { AssignScanInt $1 }
 
 
 ForOperation : ';'                      { EmptyFor }
@@ -145,11 +145,6 @@ Statements : {- empty -}             { [] }
           | Statements Statement     { $1 ++ [$2] }
 
 
-Type : int     { IntType }
-     | bool    { BoolType }
-     | string  { StringType }
-
-
 Declaration : {- empty -}               { [] }
           | Type id                     { [($1, $2)] }
           | Declaration ',' Type id     { $1 ++ [($3, $4)] }
@@ -158,6 +153,11 @@ Declaration : {- empty -}               { [] }
 Expressions : {- empty -}              { [] }
           | Expression                 { [$1] }
           | Expressions ',' Expression { $1 ++ [$3] }
+
+
+Type : int     { IntType }
+     | bool    { BoolType }
+     | string  { StringType }
 
 
 {
