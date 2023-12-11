@@ -63,9 +63,9 @@ while { WHILE_TOKEN }
 for { FOR_TOKEN }
 
 -- input/output
--- print_int { PRINTINT_TOKEN }
+print_int { PRINTINT_TOKEN }
 scan_int  { SCANINT_TOKEN }
--- print_str { PRINTSTR_TOKEN }
+print_str { PRINTSTR_TOKEN }
 
 -- associatividade e precedência
 %left "<" ">" "==" "!=" ">=" "<=" "&&" "||"
@@ -91,9 +91,9 @@ Statement : StatementOp                                                         
           | for '(' ForOperation CompareExpression ';' Operation ')' Statement  { For $3 $4 $6 $8 }
           | '{' Statements '}'                                                  { StatementsBlock $2 }
           | id '(' Expressions ')' ';'                                          { FunctionCallStm $1 $3 }
-          | return Expressions ';'                                              { Return $2 }
-          -- | print_int '(' Expression ')' ';'                                    { PrintInt $3 }
-          -- | print_str '(' Expression ')' ';'                                    { PrintStr $3 }
+          | return Expression ';'                                               { Return $2 }
+          | print_int '(' Expression ')' ';'                                    { PrintInt $3 }
+          | print_str '(' Expression ')' ';'                                    { PrintStr $3 }
 
 
 Expression : num                        { Num $1}
@@ -108,7 +108,7 @@ Expression : num                        { Num $1}
           | Expression '%' Expression   { Op Mod $1 $3 }
           | true                        { BooleanConst True }
           | false                       { BooleanConst False }
-          --| scan_int '(' ')'            { ScanIntExp }
+          | scan_int '(' ')'            { ScanIntExp }
 
 
 Operation : id '=' Expression { AssignOp $1 $3 }
@@ -119,9 +119,10 @@ Operation : id '=' Expression { AssignOp $1 $3 }
 
 
 StatementOp : id '=' Expression ';'     { AssignStm $1 $3 }
-          | Type Expressions ';'        { Init $1 $2 }
+          | Type id ';'        { Init $1 $2 }
           | Type id '=' Expression ';'  { Declaration $1 $2 $4 }
           -- | id '=' scan_int '(' ')' ';' { AssignScanInt $1 }
+          -- | Type Expressions ';' { Init $1 $2 }
 
 
 ForOperation : ';'                      { EmptyFor }
@@ -139,6 +140,8 @@ CompareExpression : Expression "==" Expression                   { Comp Equal $1
                   | CompareExpression "||" CompareExpression     { Or $1 $3 }
                   | '!' CompareExpression                        { Not $2 }
                   | id '(' Expressions ')'                       { FunctionCallComp $1 $3 }
+                  | true                                         { BooleanCond True }
+                  | false                                        { BooleanCond False }
 
 
 Statements : {- empty -}             { [] }

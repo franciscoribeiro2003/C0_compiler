@@ -1,17 +1,17 @@
 name:                c0
 version:             0.1.0.1
-synopsis:            Compilador simples
-description:         Compilador simples
-author:              Francisco Ribeiro & Marisa Azevedo
-maintainer:          up202104797 & up202108624
+synopsis:            Compilador Simples para a linguagem C0
+description:         Compilador Simples para a linguagem C0
+author:              Francisco Ribeiro && Marisa Azevedo
+maintainer:          up202104797 && up202108624
 category:            Language
 build-type:          Simple
 cabal-version:       >=1.10
 
 executable main
   main-is:             Main.hs
-  other-modules:       Lexer, Parser, AST
-  build-tools:         alex, happy
-  build-depends:       base, array
+  other-modules:       Lexer, Parser, AST, IR, CodeGen1, CodeGen2
+  build-tools:         alex, happy, Haskell2010
+  build-depends:       base, array, containers, mtl
   hs-source-dirs:      src
   default-language:    Haskell2010

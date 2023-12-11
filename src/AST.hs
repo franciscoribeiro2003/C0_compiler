@@ -39,9 +39,10 @@ data CompOperator = Lowert
 
 
 data StatementOp = AssignStm String Exp
-              | Init Type [Exp]
+              | Init Type String
               | Declaration Type String Exp
   deriving Show
+              -- | Init Type [Exp]
               -- | AssignScanInt String
 
 
@@ -58,10 +59,10 @@ data Statement = VarOp StatementOp
         | For ForOperation CompareExpression Operation Statement
         | StatementsBlock [Statement]
         | FunctionCallStm String [Exp]
-        | Return [Exp]
+        | Return Exp
+        | PrintInt Exp
+        | PrintStr Exp
   deriving Show
-        -- | PrintInt Exp
-        -- | PrintStr Exp
 
 
 data Exp = Num Int
@@ -71,8 +72,8 @@ data Exp = Num Int
          | Op BinOperator Exp Exp
          | BooleanConst Bool
          | EmptyFunctionCall String
+         | ScanIntExp
   deriving Show
-         -- | ScanIntExp
 
 
 data CompareExpression = Comp CompOperator Exp Exp
@@ -80,4 +81,5 @@ data CompareExpression = Comp CompOperator Exp Exp
                     | Or CompareExpression CompareExpression
                     | Not CompareExpression
                     | FunctionCallComp String [Exp]
+                    | BooleanCond Bool
   deriving Show

@@ -33,9 +33,9 @@ tokens :-
     return                  { \_ -> RETURN_TOKEN }
     int                     { \_ -> INT_DEF_TOKEN }
     bool                    { \_ -> BOOL_DEF_TOKEN }
-    -- scan_int                { \_ -> SCANINT_TOKEN }
-    -- print_int               { \_ -> PRINTINT_TOKEN }
-    -- print_str               { \_ -> PRINTSTR_TOKEN }
+    scan_int                { \_ -> SCANINT_TOKEN }
+    print_int               { \_ -> PRINTINT_TOKEN }
+    print_str               { \_ -> PRINTSTR_TOKEN }
 
     -- tokens
     $digit+                 { \s -> NUM_TOKEN (read s) }
@@ -88,9 +88,9 @@ data Token
   | WHILE_TOKEN
   | FOR_TOKEN
   | PRINTINT_TOKEN
+  | PRINTSTR_TOKEN
   | SCANINT_TOKEN
   | STRING_DEF_TOKEN
-  | PRINTSTR_TOKEN
   | INCR_TOKEN
   | DECR_TOKEN
   | ASSIGN_TOKEN

@@ -1,0 +1,15 @@
+int area() {
+    int a;
+    int b = 2;
+    int c = 3;
+    a = 2 * 3;
+
+    if(a > 6) {
+        print_str("area suficiente");
+    }
+    else {
+        print_str("area insuficiente");
+    }
+    print_str("area calculada:");
+    print_int(a);
+}
