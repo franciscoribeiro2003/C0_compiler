@@ -11,8 +11,8 @@ import qualified Data.Map as Map
 main :: IO ()
 main = do
   passed <- getContents
-  --print (parserC0 $ alexScanTokens passed)
+  print (parser $ alexScanTokens passed)
   let func = parser (alexScanTokens passed)
   let code = evalState (transAst Map.empty func) (0,0)
-  --print code
+  print code
   printCode code
